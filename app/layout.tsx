@@ -41,7 +41,7 @@ export default function RootLayout({
             enableSystem={false}
             storageKey="discord-theme"
           >
-            <header className="flex justify-end items-center p-4 gap-4 h-16">
+            <header className="flex justify-end items-center p-4 gap-4 h-16 z-10">
               
               <SignedOut>
                 <SignInButton />
