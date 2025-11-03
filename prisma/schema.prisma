@@ -68,6 +68,7 @@ model Member {
 
   @@index([profileId])
   @@index([serverId])
+  @@unique([profileId, serverId])
 }
 
 enum ChannelType {
@@ -92,4 +93,19 @@ model Channel{
 
   @@index([serverId])
   @@index([profileId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  imageUrl  String?  @db.Text
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  channelId String
+  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([channelId])
+  @@index([memberId])
 }
