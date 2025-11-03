@@ -56,7 +56,9 @@ export default function RootLayout({
               </SignedIn>
               <ModeToggle />
             </header>
+            <div className="h-[50vh]">
             {children}
+            </div>
           </ThemeProvider>
         </ClerkProvider>
       </body>
