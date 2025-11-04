@@ -53,8 +53,28 @@ export const InitialModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      const res = await fetch("/api/servers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create server");
+      }
+
+      const server = await res.json();
+
+      window.location.href = `/servers/${server.id}`;
+    } catch (err) {
+      console.error(err);
+      alert("Error creating server. Please try again.");
+    }
   };
+
 
   if (!isMounted){
     return null;
