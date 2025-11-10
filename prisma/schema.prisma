@@ -33,7 +33,7 @@ model Server {
   id         String @id @default(uuid())
   name       String
   imageUrl   String @db.Text
-  inviteCode String @db.Text
+  inviteCode String @unique @db.Text
 
   members  Member[]
   channels Channel[]
@@ -106,5 +106,6 @@ model Message {
   updatedAt DateTime @updatedAt
 
   @@index([channelId])
+  @@index([createdAt])
   @@index([memberId])
 }

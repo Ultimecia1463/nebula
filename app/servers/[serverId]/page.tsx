@@ -37,6 +37,12 @@ const ServerPage = async ({ params }: ServerPageProps) => {
           ))}
         </ul>
       </div>
+      <div className="mt-4">
+        <h2 className="font-semibold mb-2">Invite Link</h2>
+        <p className="text-sm text-zinc-500">
+          {`${process.env.NEXT_PUBLIC_APP_URL}/invite/${server.inviteCode}`}
+        </p>
+      </div>
     </div>
   );
 };
