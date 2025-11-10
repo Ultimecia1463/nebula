@@ -3,7 +3,6 @@
 import { CreateServerModal } from "@/components/modals/create-server-modal";
 import { InviteModal } from "../modals/invite-modal";
 import { useEffect, useState } from "react";
-import { MembersModal } from "../modals/members-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
