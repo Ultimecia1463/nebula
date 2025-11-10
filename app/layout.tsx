@@ -12,6 +12,7 @@ import {
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
 import { cn } from "@/lib/utils";
+import ServerSidebar from "@/components/server-sidebar";
 
 const font = Open_Sans({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
             enableSystem={false}
             storageKey="discord-theme"
           >
+            <ServerSidebar />
             <header className="flex justify-end items-center p-4 gap-4 h-16 z-10">
               
               <SignedOut>
@@ -56,7 +58,7 @@ export default function RootLayout({
               </SignedIn>
               <ModeToggle />
             </header>
-            <div className="h-[50vh]">
+            <div className="h-[50vh] ml-[72px]">
             {children}
             </div>
           </ThemeProvider>
