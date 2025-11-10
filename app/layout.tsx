@@ -3,16 +3,11 @@ import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
 } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { ModeToggle } from "@/components/mode-toggle";
+
 import { cn } from "@/lib/utils";
-import ServerSidebar from "@/components/server-sidebar";
+import { ModalProvider } from "@/components/providers/modal-provider";
 
 const font = Open_Sans({
   subsets: ["latin"],
@@ -35,30 +30,15 @@ export default function RootLayout({
       <body className={cn(font.className, 
         "bg-white dark:bg-[#313338]"
       )}>
-        <ClerkProvider>
+        <ClerkProvider afterSignOutUrl="/">
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem={false}
             storageKey="discord-theme"
           >
-            <ServerSidebar />
-            <header className="flex justify-end items-center p-4 gap-4 h-16 z-10">
-              
-              <SignedOut>
-                <SignInButton />
-                <SignUpButton>
-                  <button className="bg-[#6c47ff] text-ceramic-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                    Sign Up
-                  </button>
-                </SignUpButton>
-              </SignedOut>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-              <ModeToggle />
-            </header>
-            <div className="h-[50vh] ml-[72px]">
+            <ModalProvider />
+            <div className="h-[50vh]">
             {children}
             </div>
           </ThemeProvider>
