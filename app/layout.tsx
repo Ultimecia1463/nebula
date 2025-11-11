@@ -38,7 +38,7 @@ export default function RootLayout({
             storageKey="discord-theme"
           >
             <ModalProvider />
-            <div className="h-[50vh]">
+            <div className="h-[100vh]">
             {children}
             </div>
           </ThemeProvider>
