@@ -1,6 +1,7 @@
+import { Message } from "@prisma/client";
 import React from "react";
 
-export default function MessageList({ messages }: { messages: any[] }) {
+export default function MessageList({ messages }: { messages: Message[] }) {
   return (
     <div className="flex flex-col-reverse p-4 space-y-3-reverse overflow-y-auto h-full">
       {messages.map((msg) => (
