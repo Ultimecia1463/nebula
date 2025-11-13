@@ -101,6 +101,9 @@ model Message {
   member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
   channelId String
   channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  replyToId String? 
+  replyTo   Message? @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies   Message[] @relation("MessageReplies")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
