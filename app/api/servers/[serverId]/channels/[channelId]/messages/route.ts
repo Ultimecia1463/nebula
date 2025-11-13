@@ -12,7 +12,7 @@ export async function POST(
 
     const { serverId, channelId } = await params;
     const body = await req.json();
-    const { content, imageUrl } = body;
+    const { content, imageUrl, replyToId } = body;
 
     if (!content && !imageUrl)
       return new NextResponse("Missing message content", { status: 400 });
@@ -29,11 +29,13 @@ export async function POST(
       data: {
         content,
         imageUrl,
+        replyToId: replyToId || null, 
         memberId: member.id,
         channelId,
       },
       include: {
         member: { include: { profile: true } },
+        replyTo: { include: { member: { include: { profile: true } } } }, 
       },
     });
 
@@ -49,12 +51,23 @@ export async function GET(
   { params }: { params: Promise<{ channelId: string }> }
 ) {
   const { channelId } = await params;
+
   const messages = await db.message.findMany({
     where: { channelId },
     include: {
       member: { include: { profile: true } },
+      replyTo: {
+        include: {
+          member: {
+            include: {
+              profile: true
+            }
+          }
+        }
+      }
     },
     orderBy: { createdAt: "asc" },
   });
+
   return NextResponse.json(messages);
 }

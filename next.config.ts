@@ -8,7 +8,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.ufs.sh",
         pathname: "/f/*",
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+      },
     ]
   }
 };
