@@ -29,6 +29,9 @@ const ServerSidebar = async ({ serverId }: ServerSidebarProps) => {
   const audioChannels = server.channels.filter(
     (c) => c.type === ChannelType.AUDIO
   );
+  const videoChannels = server.channels.filter(
+    (c) => c.type === ChannelType.VIDEO
+  );
 
   return (
     <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5]">
@@ -43,9 +46,16 @@ const ServerSidebar = async ({ serverId }: ServerSidebarProps) => {
           server={server}
         />
         <ServerChannelList
-          label="AUDIO Channels"
+          label="Audio Channels"
           type={ChannelType.AUDIO}
           channels={audioChannels}
+          role={role}
+          server={server}
+        />
+        <ServerChannelList
+          label="Video Channels"
+          type={ChannelType.VIDEO}
+          channels={videoChannels}
           role={role}
           server={server}
         />

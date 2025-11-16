@@ -12,9 +12,9 @@ export async function POST(
 
     const { serverId, channelId } = await params;
     const body = await req.json();
-    const { content, imageUrl, replyToId } = body;
+    const { content, fileUrl, replyToId } = body;
 
-    if (!content && !imageUrl)
+    if (!content && !fileUrl)
       return new NextResponse("Missing message content", { status: 400 });
 
     const profile = await db.profile.findUnique({ where: { userId } });
@@ -28,7 +28,7 @@ export async function POST(
     const message = await db.message.create({
       data: {
         content,
-        imageUrl,
+        fileUrl,
         replyToId: replyToId || null, 
         memberId: member.id,
         channelId,
@@ -48,26 +48,42 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ channelId: string }> }
+  { params }: { params: Promise<{ serverId: string; channelId: string }> }
 ) {
-  const { channelId } = await params;
+  try {
+    const { userId } = await auth();
+    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
-  const messages = await db.message.findMany({
-    where: { channelId },
-    include: {
-      member: { include: { profile: true } },
-      replyTo: {
-        include: {
-          member: {
-            include: {
-              profile: true
+    const { serverId, channelId } = await params;
+
+    const profile = await db.profile.findUnique({ where: { userId } });
+    if (!profile) return new NextResponse("Profile not found", { status: 404 });
+
+    const member = await db.member.findFirst({
+      where: { profileId: profile.id, serverId },
+    });
+    if (!member) return new NextResponse("Not a server member", { status: 403 });
+
+    const messages = await db.message.findMany({
+      where: { channelId },
+      include: {
+        member: { include: { profile: true } },
+        replyTo: {
+          include: {
+            member: {
+              include: {
+                profile: true
+              }
             }
           }
         }
-      }
-    },
-    orderBy: { createdAt: "asc" },
-  });
+      },
+      orderBy: { createdAt: "asc" },
+    });
 
-  return NextResponse.json(messages);
+    return NextResponse.json(messages);
+  } catch (err) {
+    console.error("[MESSAGE_GET]", err);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
 }

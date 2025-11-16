@@ -6,6 +6,8 @@ import { CreateChannelModal } from "../modals/create-channel-modal";
 import { MembersModal } from "../modals/members-modal";
 import { EditChannelModal } from "../modals/edit-channel-modal";
 import { SearchServerModal } from "../modals/search-server-modal";
+import { MessageFileModal } from "../modals/message-file-modal";
+import { DeleteMessageModal } from "../modals/delete-message-modal";
 import { useEffect, useState } from "react";
 
 export const ModalProvider = () => {
@@ -27,6 +29,8 @@ export const ModalProvider = () => {
       <MembersModal />
       <EditChannelModal />
       <SearchServerModal />
+      <MessageFileModal />
+      <DeleteMessageModal />
     </>
   );
 };

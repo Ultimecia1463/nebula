@@ -28,7 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const formSchema = z.object({
   name: z.string().min(1, "Channel name is required"),
-  type: z.enum(["TEXT", "AUDIO"]), 
+  type: z.enum(["TEXT", "AUDIO", "VIDEO"]), 
 });
 
 export const CreateChannelModal = () => {
@@ -36,7 +36,7 @@ export const CreateChannelModal = () => {
   const router = useRouter();
   const isModalOpen = isOpen && type === "createChannel";
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -107,7 +107,8 @@ export const CreateChannelModal = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="TEXT">Text</SelectItem>
-                        <SelectItem value="AUDIO">AUDIO</SelectItem>
+                        <SelectItem value="AUDIO">Audio</SelectItem>
+                        <SelectItem value="VIDEO">Video</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
