@@ -10,6 +10,7 @@ import {
   Plus,
   Hash,
   Volume2,
+  Video,
   ChevronDown,
   Settings,
 } from "lucide-react";
@@ -29,6 +30,7 @@ interface ServerChannelListProps {
 const iconMap = {
   [ChannelType.TEXT]: Hash,
   [ChannelType.AUDIO]: Volume2,
+  [ChannelType.VIDEO]: Video,
 };
 
 export const ServerChannelList = ({

@@ -28,13 +28,14 @@ export const EditChannelModal = () => {
   const { channel, server } = data;
 
   const [name, setName] = useState(channel?.name || "");
-  const [channelType, setChannelType] = useState(channel?.type || "TEXT");
+  const [channelType, setChannelType] = useState<"TEXT" | "AUDIO" | "VIDEO">(channel?.type || "TEXT");
   const [loading, setLoading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false); // 🔥 new: confirmation dialog
 
   const router = useRouter();
 
   const onSubmit = async () => {
+    if (!channel) return;
     try {
       setLoading(true);
       await axios.patch(`/api/channels/${channel.id}`, {
@@ -51,6 +52,7 @@ export const EditChannelModal = () => {
   };
 
   const onDelete = async () => {
+    if (!channel) return;
     try {
       setLoading(true);
       await axios.delete(`/api/channels/${channel.id}`);
@@ -87,7 +89,7 @@ export const EditChannelModal = () => {
 
             <Select
               defaultValue={channelType}
-              onValueChange={(val) => setChannelType(val)}
+              onValueChange={(val) => setChannelType(val as "TEXT" | "AUDIO" | "VIDEO")}
               disabled={loading}
             >
               <SelectTrigger className="w-full">
@@ -96,6 +98,7 @@ export const EditChannelModal = () => {
               <SelectContent>
                 <SelectItem value="TEXT">Text</SelectItem>
                 <SelectItem value="AUDIO">Audio</SelectItem>
+                <SelectItem value="VIDEO">Video</SelectItem>
               </SelectContent>
             </Select>
 
