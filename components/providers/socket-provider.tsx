@@ -1,56 +1,68 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { io as ClientIO, Socket } from "socket.io-client";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
+
+type LegacySocketLike = {
+  on: (...args: unknown[]) => void;
+  off: (...args: unknown[]) => void;
+  emit: (...args: unknown[]) => void;
+};
 
 type SocketContextType = {
-  socket: Socket | null;
+  socket: LegacySocketLike | null;
   isConnected: boolean;
+  transport: "none" | "sse" | "polling";
+  setRealtimeState: (state: {
+    isConnected: boolean;
+    transport: "none" | "sse" | "polling";
+  }) => void;
 };
 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
   isConnected: false,
+  transport: "none",
+  setRealtimeState: () => {},
 });
 
 export const useSocket = () => {
   return useContext(SocketContext);
 };
 
-export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
+export const SocketProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [transport, setTransport] = useState<"none" | "sse" | "polling">("none");
 
-  useEffect(() => {
-    const socketInstance = ClientIO(process.env.NEXT_PUBLIC_SITE_URL || "", {
-      path: "/api/socket/io",
-      addTrailingSlash: false,
-    });
+  const setRealtimeState = useCallback(
+    ({
+      isConnected,
+      transport,
+    }: {
+      isConnected: boolean;
+      transport: "none" | "sse" | "polling";
+    }) => {
+      setIsConnected(isConnected);
+      setTransport(transport);
+    },
+    []
+  );
 
-    socketInstance.on("connect", () => {
-      setIsConnected(true);
-      console.log("✅ Socket connected:", socketInstance.id);
-    });
-
-    socketInstance.on("disconnect", () => {
-      setIsConnected(false);
-      console.log("❌ Socket disconnected");
-    });
-
-    socketInstance.on("connect_error", (error) => {
-      console.error("🔴 Socket connection error:", error);
-    });
-
-    setSocket(socketInstance);
-
-    return () => {
-      socketInstance.disconnect();
-      console.log("🧹 Socket cleanup");
-    };
-  }, []);
+  const value = useMemo(
+    () => ({
+      socket: null,
+      isConnected,
+      transport,
+      setRealtimeState,
+    }),
+    [isConnected, transport, setRealtimeState]
+  );
 
   return (
-    <SocketContext.Provider value={{ socket, isConnected }}>
+    <SocketContext.Provider value={value}>
       {children}
     </SocketContext.Provider>
   );

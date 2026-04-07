@@ -9,13 +9,13 @@ const ServerIdLayout = async ({
   params,
 }: {
   children: React.ReactNode;
-  params: { serverId: string };
+  params: Promise<{ serverId: string }>;
 }) => {
   const { serverId } = await params;
   const profile = await currentProfile();
 
   if (!profile) {
-    return redirect("sign-in");
+    return redirect("/sign-in");
   }
 
   const server = await db.server.findFirst({

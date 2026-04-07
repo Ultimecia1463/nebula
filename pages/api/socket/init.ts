@@ -2,16 +2,11 @@ import { NextApiRequest } from "next";
 import { ensureSocketServer } from "@/lib/socket-server";
 import { NextApiResponseServerIO } from "../../../types/socket";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponseServerIO
 ) {
   ensureSocketServer(res.socket.server);
-  res.end();
+
+  return res.status(200).json({ ok: true });
 }

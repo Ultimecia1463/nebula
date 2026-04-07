@@ -10,10 +10,11 @@ import axios from "axios";
 import { useModal } from "@/hooks/use-modal-store";
 import { EmojiPickerComponent } from "../emoji-picker";
 import { useRouter } from "next/navigation";
+import { ChatQuery } from "@/types/chat";
 
 interface ChatInputProps {
   apiUrl: string;
-  query: Record<string, any>;
+  query: ChatQuery;
   name: string;
   type: "conversation" | "channel";
 }

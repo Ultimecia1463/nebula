@@ -31,6 +31,7 @@ export async function POST(req: Request) {
         name,
         imageUrl,
         inviteCode,
+        profileId: profile.id,
         members: {
           create: [
             {

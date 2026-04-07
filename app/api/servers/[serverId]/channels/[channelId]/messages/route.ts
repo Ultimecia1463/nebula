@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { publishChannelMessageCreated } from "@/lib/channel-events";
 
 export async function POST(
   req: Request,
@@ -38,6 +39,7 @@ export async function POST(
         replyTo: { include: { member: { include: { profile: true } } } }, 
       },
     });
+    publishChannelMessageCreated(channelId, message);
 
     return NextResponse.json(message);
   } catch (err) {

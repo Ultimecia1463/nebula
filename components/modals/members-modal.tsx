@@ -20,7 +20,7 @@ import { useState } from "react";
 import { MemberRole } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs"; 
+import { useAuth } from "@clerk/nextjs";
 
 export const MembersModal = () => {
   const { isOpen, onClose, type, data } = useModal();
@@ -28,9 +28,9 @@ export const MembersModal = () => {
   const { server } = data;
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { userId } = useAuth(); 
+  const { userId } = useAuth();
 
-  if (!server) return null;
+  if (!server?.members) return null;
 
   const onRoleChange = async (memberId: string, role: MemberRole) => {
     try {
@@ -66,35 +66,37 @@ export const MembersModal = () => {
         </DialogHeader>
 
         <div className="space-y-4 mt-4">
-          {server.members.map((m: any) => {
-            const isSelf = m.profile.userId === userId; 
+          {server.members.map((member) => {
+            const isSelf = member.profile.userId === userId;
             return (
               <div
-                key={m.id}
+                key={member.id}
                 className="flex items-center justify-between p-2 border rounded-md"
               >
                 <div className="flex items-center gap-3">
                   <Image
-                    src={m.profile.imageUrl}
+                    src={member.profile.imageUrl}
                     width={36}
                     height={36}
-                    alt={m.profile.name}
+                    alt={member.profile.name}
                     className="rounded-full"
                   />
                   <div>
-                    <p className="font-semibold">{m.profile.name}</p>
-                    <p className="text-xs text-gray-500">{m.profile.email}</p>
+                    <p className="font-semibold">{member.profile.name}</p>
+                    <p className="text-xs text-gray-500">{member.profile.email}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <Select
-                    defaultValue={m.role}
-                    onValueChange={(val) => onRoleChange(m.id, val as MemberRole)}
-                    disabled={loading || isSelf} 
+                    defaultValue={member.role}
+                    onValueChange={(value) =>
+                      onRoleChange(member.id, value as MemberRole)
+                    }
+                    disabled={loading || isSelf}
                   >
                     <SelectTrigger className="w-[120px]">
-                      <SelectValue placeholder={m.role} />
+                      <SelectValue placeholder={member.role} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="MODERATOR">Moderator</SelectItem>
@@ -104,8 +106,8 @@ export const MembersModal = () => {
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => onKick(m.id)}
-                    disabled={loading || isSelf} 
+                    onClick={() => onKick(member.id)}
+                    disabled={loading || isSelf}
                   >
                     Kick
                   </Button>

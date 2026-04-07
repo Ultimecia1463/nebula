@@ -4,11 +4,12 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { serverId: string } }
+  { params }: { params: Promise<{ serverId: string }> }
 ) {
   try {
     const { userId } = await auth();
     if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    const { serverId } = await params;
 
     const profile = await db.profile.findUnique({
       where: { userId },
@@ -18,7 +19,7 @@ export async function PATCH(
       return new NextResponse("Profile not found", { status: 404 });
 
     const server = await db.server.findUnique({
-      where: { id: params.serverId },
+      where: { id: serverId },
       include: { members: true },
     });
 

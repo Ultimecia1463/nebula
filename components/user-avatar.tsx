@@ -9,7 +9,7 @@ interface UserAvatarProps {
   alt?: string;
 }
 
-export const UserAvatar = React.memo(({ src, className, alt = "User avatar" }: UserAvatarProps) => {
+const UserAvatarComponent = ({ src, className, alt = "User avatar" }: UserAvatarProps) => {
   return (
     <Avatar className={cn("h-7 w-7 rounded-full" , className)}>
       <AvatarImage 
@@ -23,4 +23,8 @@ export const UserAvatar = React.memo(({ src, className, alt = "User avatar" }: U
       </AvatarFallback>
     </Avatar>
   );
-});
+};
+
+UserAvatarComponent.displayName = "UserAvatar";
+
+export const UserAvatar = React.memo(UserAvatarComponent);
