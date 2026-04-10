@@ -7,14 +7,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import {
   ChevronDown,
-  LogOut,
   PlusCircle,
-  Settings,
-  TrashIcon,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -49,15 +45,6 @@ const ServerHeader = ({ server, role }: ServerHeaderProps) => {
         )}
         {isAdmin && (
           <DropdownMenuItem
-            className="px-3 py-2 text-sm cursor-pointer"
-            onClick={() => onOpen("editServer", { server })}
-          >
-            Server Settings
-            <Settings className="h-4 w-4 ml-auto" />
-          </DropdownMenuItem>
-        )}
-        {isAdmin && (
-          <DropdownMenuItem
             onClick={() => onOpen("members", { server })}
             className="px-3 py-2 text-sm cursor-pointer"
           >
@@ -72,19 +59,6 @@ const ServerHeader = ({ server, role }: ServerHeaderProps) => {
           >
             Create Channel
             <PlusCircle className="h-4 w-4 ml-auto" />
-          </DropdownMenuItem>
-        )}
-        {isModerator && <DropdownMenuSeparator />}
-        {isAdmin && (
-          <DropdownMenuItem className="text-rose-500 px-3 py-2 text-sm cursor-pointer">
-            Delete Server
-            <TrashIcon className="h-4 w-4 ml-auto" />
-          </DropdownMenuItem>
-        )}
-        {!isAdmin && (
-          <DropdownMenuItem className="text-rose-500 px-3 py-2 text-sm cursor-pointer">
-            Leave server
-            <LogOut className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

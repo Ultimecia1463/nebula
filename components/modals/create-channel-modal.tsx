@@ -28,7 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const formSchema = z.object({
   name: z.string().min(1, "Channel name is required"),
-  type: z.enum(["TEXT", "AUDIO", "VIDEO"]), 
+  type: z.enum(["TEXT", "VIDEO"]),
 });
 
 export const CreateChannelModal = () => {
@@ -70,7 +70,7 @@ export const CreateChannelModal = () => {
             Create a Channel
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
-            Choose a name and type for your new channel.
+            Choose a name and whether this channel is for text or live video.
           </DialogDescription>
         </DialogHeader>
 
@@ -107,7 +107,6 @@ export const CreateChannelModal = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="TEXT">Text</SelectItem>
-                        <SelectItem value="AUDIO">Audio</SelectItem>
                         <SelectItem value="VIDEO">Video</SelectItem>
                       </SelectContent>
                     </Select>

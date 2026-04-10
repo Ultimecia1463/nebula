@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useMounted } from "@/hooks/use-mounted";
 
 const useOrigin = () => {
-  const [mounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 

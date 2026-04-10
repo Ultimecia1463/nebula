@@ -30,7 +30,7 @@ export const MembersModal = () => {
   const router = useRouter();
   const { userId } = useAuth(); 
 
-  if (!server) return null;
+  if (!server || !("members" in server)) return null;
 
   const onRoleChange = async (memberId: string, role: MemberRole) => {
     try {
@@ -66,7 +66,7 @@ export const MembersModal = () => {
         </DialogHeader>
 
         <div className="space-y-4 mt-4">
-          {server.members.map((m: any) => {
+          {server.members.map((m) => {
             const isSelf = m.profile.userId === userId; 
             return (
               <div

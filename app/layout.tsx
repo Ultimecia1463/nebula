@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import {
   ClerkProvider,
@@ -8,14 +7,6 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 
 import { cn } from "@/lib/utils";
 import { ModalProvider } from "@/components/providers/modal-provider";
-import { SocketProvider } from "@/components/providers/socket-provider";
-import { QueryProvider } from "@/components/providers/query-provider";
-
-const font = Open_Sans({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
-});
 
 export const metadata: Metadata = {
   title: "Nebula",
@@ -29,9 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(font.className, 
-        "bg-white dark:bg-[#313338]"
-      )}>
+      <body className={cn("bg-white dark:bg-[#313338]")}>
         <ClerkProvider afterSignOutUrl="/">
           <ThemeProvider
             attribute="class"
@@ -39,14 +28,10 @@ export default function RootLayout({
             enableSystem={false}
             storageKey="discord-theme"
           >
-            <SocketProvider>
-              <ModalProvider />
-              <QueryProvider>
-                <div className="h-[100vh]">
-                  {children}
-                </div>
-              </QueryProvider>
-            </SocketProvider>
+            <ModalProvider />
+            <div className="h-[100vh]">
+              {children}
+            </div>
           </ThemeProvider>
         </ClerkProvider>
       </body>

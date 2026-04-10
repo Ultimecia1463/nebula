@@ -25,8 +25,20 @@ export async function PATCH(
     if (!admin || admin.role !== "ADMIN")
       return new NextResponse("Forbidden", { status: 403 });
 
+    const member = await db.member.findFirst({
+      where: {
+        id: memberId,
+        serverId,
+      },
+    });
+    if (!member) return new NextResponse("Member not found", { status: 404 });
+
+    if (member.profileId === profile.id) {
+      return new NextResponse("Cannot change your own role", { status: 400 });
+    }
+
     const updated = await db.member.update({
-      where: { id: memberId },
+      where: { id: member.id },
       data: { role },
     });
 
@@ -56,8 +68,11 @@ export async function DELETE(
     if (!admin || admin.role !== "ADMIN")
       return new NextResponse("Forbidden", { status: 403 });
 
-    const member = await db.member.findUnique({
-      where: { id: memberId },
+    const member = await db.member.findFirst({
+      where: {
+        id: memberId,
+        serverId,
+      },
     });
     if (!member) return new NextResponse("Member not found", { status: 404 });
 

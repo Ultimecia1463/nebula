@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ChannelType } from "@prisma/client";
+import { normalizeChannelType } from "@/lib/channel-type";
 
 export async function POST(
   req: Request,
@@ -11,7 +12,9 @@ export async function POST(
     const { userId } = await auth();
     if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
-    const { name, type } = await req.json();
+    const body = await req.json();
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const type = typeof body.type === "string" ? body.type : "";
     if (!name || !type)
       return new NextResponse("Missing required fields", { status: 400 });
 
@@ -34,10 +37,12 @@ export async function POST(
       return new NextResponse("Forbidden", { status: 403 });
     }
 
+    const normalizedType = normalizeChannelType(type as ChannelType);
+
     const channel = await db.channel.create({
       data: {
         name,
-        type: type as ChannelType,
+        type: normalizedType,
         profileId: profile.id,
         serverId: server.id,
       },

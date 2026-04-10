@@ -15,12 +15,14 @@ export const UserAvatar = React.memo(({ src, className, alt = "User avatar" }: U
       <AvatarImage 
         src={src} 
         alt={alt}
-        className="h-7 w-7 rounded-full object-cover"
+        className={cn("h-7 w-7 rounded-full object-cover", className)}
         loading="lazy"
       />
-      <AvatarFallback className="h-7 w-7 rounded-full bg-zinc-500 flex items-center justify-center">
+      <AvatarFallback className={cn("h-7 w-7 rounded-full bg-zinc-500 flex items-center justify-center", className)}>
         <User className="h-4 w-4 text-white" />
       </AvatarFallback>
     </Avatar>
   );
 });
+
+UserAvatar.displayName = "UserAvatar";

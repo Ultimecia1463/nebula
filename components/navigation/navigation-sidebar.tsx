@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import NavigationAction from "./navigation-action";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
 import NavigationItem from "./navigation-item";
 import { UserButton } from "@clerk/nextjs";
@@ -24,9 +24,6 @@ const NavigationSidebar = async () => {
       },
     },
   });
-
-  // Server check
-  console.log(`List of Servers: ${servers}`);
   return (
     <div className="flex flex-col space-y-4 items-center h-full text-primary w-full dark:bg-[#1E1F22] py-3">
       <NavigationAction />

@@ -1,6 +1,8 @@
-import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+
+import { db } from "@/lib/db";
 
 interface InvitePageProps {
   params: Promise<{ inviteCode: string }>;
@@ -10,7 +12,6 @@ const InvitePage = async ({ params }: InvitePageProps) => {
   const { userId } = await auth();
   if (!userId) return redirect("/sign-in");
 
-  // ✅ await the params promise first
   const { inviteCode } = await params;
 
   const profile = await db.profile.findUnique({
@@ -32,13 +33,23 @@ const InvitePage = async ({ params }: InvitePageProps) => {
 
   if (isMember) return redirect(`/servers/${server.id}`);
 
-  await db.member.create({
-    data: {
-      profileId: profile.id,
-      serverId: server.id,
-      role: "GUEST",
-    },
-  });
+  try {
+    await db.member.create({
+      data: {
+        profileId: profile.id,
+        serverId: server.id,
+        role: "GUEST",
+      },
+    });
+  } catch (error) {
+    const isDuplicateMembership =
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002";
+
+    if (!isDuplicateMembership) {
+      throw error;
+    }
+  }
 
   return redirect(`/servers/${server.id}`);
 };

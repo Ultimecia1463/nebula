@@ -9,7 +9,6 @@ import {
 import {
   Plus,
   Hash,
-  Volume2,
   Video,
   ChevronDown,
   Settings,
@@ -18,10 +17,10 @@ import { useModal } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
 import { useRouter, useParams } from "next/navigation";
 import React from "react";
+import { normalizeChannelType } from "@/lib/channel-type";
 
 interface ServerChannelListProps {
   label: string;
-  type: ChannelType;
   role?: MemberRole;
   channels: Channel[];
   server: Server;
@@ -29,13 +28,12 @@ interface ServerChannelListProps {
 
 const iconMap = {
   [ChannelType.TEXT]: Hash,
-  [ChannelType.AUDIO]: Volume2,
+  [ChannelType.AUDIO]: Video,
   [ChannelType.VIDEO]: Video,
 };
 
 export const ServerChannelList = ({
   label,
-  type,
   role,
   channels,
   server,
@@ -43,8 +41,6 @@ export const ServerChannelList = ({
   const router = useRouter();
   const params = useParams();
   const { onOpen } = useModal();
-
-  const Icon = iconMap[type];
   const isAdminOrMod = role === "ADMIN" || role === "MODERATOR";
 
   return (
@@ -68,7 +64,7 @@ export const ServerChannelList = ({
       <div className="space-y-1 px-2">
         {channels.map((channel) => {
           const isActive = params?.channelId === channel.id;
-          const ChannelIcon = iconMap[channel.type];
+          const ChannelIcon = iconMap[normalizeChannelType(channel.type)];
 
           return (
             <div

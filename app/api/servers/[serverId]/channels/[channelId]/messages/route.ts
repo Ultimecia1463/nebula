@@ -12,7 +12,11 @@ export async function POST(
 
     const { serverId, channelId } = await params;
     const body = await req.json();
-    const { content, fileUrl, replyToId } = body;
+    const content =
+      typeof body.content === "string" ? body.content.trim() : "";
+    const fileUrl = typeof body.fileUrl === "string" ? body.fileUrl : null;
+    const replyToId =
+      typeof body.replyToId === "string" ? body.replyToId : null;
 
     if (!content && !fileUrl)
       return new NextResponse("Missing message content", { status: 400 });
@@ -25,13 +29,40 @@ export async function POST(
     });
     if (!member) return new NextResponse("Not a server member", { status: 403 });
 
+    const channel = await db.channel.findFirst({
+      where: {
+        id: channelId,
+        serverId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!channel) return new NextResponse("Channel not found", { status: 404 });
+
+    if (replyToId) {
+      const replyTarget = await db.message.findFirst({
+        where: {
+          id: replyToId,
+          channelId: channel.id,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!replyTarget) {
+        return new NextResponse("Reply target not found", { status: 400 });
+      }
+    }
+
     const message = await db.message.create({
       data: {
         content,
         fileUrl,
         replyToId: replyToId || null, 
         memberId: member.id,
-        channelId,
+        channelId: channel.id,
       },
       include: {
         member: { include: { profile: true } },
@@ -64,8 +95,19 @@ export async function GET(
     });
     if (!member) return new NextResponse("Not a server member", { status: 403 });
 
+    const channel = await db.channel.findFirst({
+      where: {
+        id: channelId,
+        serverId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!channel) return new NextResponse("Channel not found", { status: 404 });
+
     const messages = await db.message.findMany({
-      where: { channelId },
+      where: { channelId: channel.id },
       include: {
         member: { include: { profile: true } },
         replyTo: {

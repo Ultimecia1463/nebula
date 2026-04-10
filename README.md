@@ -1,14 +1,14 @@
 # Nebula
 
-> A real-time chat application built with Next.js.
+> A Vercel-ready chat and media application built with Next.js.
 
-A real-time chat application that allows users to create servers, channels, and communicate in real-time.
+Nebula lets users create servers, manage channels, chat in text channels, and join LiveKit-powered media rooms.
 
 ## Installing / Getting started
 
 A quick introduction of the minimal setup you need to get the project up and running.
 
-First, you'll need to have Node.js and npm installed. You will also need a database. This project uses Prisma, which can be configured to work with various SQL databases.
+First, you'll need Node.js 20.9+ and npm installed. You will also need a Postgres database. Prisma is used for persistence, Clerk handles auth, UploadThing handles uploads, and LiveKit powers media rooms.
 
 You will also need to create a `.env` file with the required environment variables. You can use `.env.example` as a template if one is available.
 
@@ -26,6 +26,11 @@ DIRECT_URL=
 # UploadThing
 UPLOADTHING_SECRET=
 UPLOADTHING_APP_ID=
+
+# LiveKit
+LIVEKIT_URL=
+LIVEKIT_API_KEY=
+LIVEKIT_API_SECRET=
 ```
 
 ```shell
@@ -38,11 +43,14 @@ cd nebula
 # Install dependencies
 npm install
 
-# Generate Prisma client
-npx prisma generate
-
 # Push the database schema
 npx prisma db push
+
+# Verify required environment variables
+npm run env:check
+
+# Run the production verification suite
+npm run verify
 
 # Run the development server
 npm run dev
@@ -52,11 +60,17 @@ The application should now be running on [http://localhost:3000](http://localhos
 
 ## Features
 
-* Real-time messaging 
+* Vercel-safe text chat with polling-based updates
+* LiveKit SFU media rooms for video and audio transport
 * User authentication with Clerk
 * File uploads with UploadThing
-* Light and dark mode
-* Server and channel creation
+* Prisma-backed server, member, and channel management
+
+## Deployment Notes
+
+Deploy this project to Vercel with all variables from `.env.example` configured in the target environment.
+
+Run `npm run env:check` before deployment. The command exits non-zero when required secrets are missing.
 
 ## Contributing
 

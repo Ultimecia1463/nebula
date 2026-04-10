@@ -5,17 +5,11 @@ import { InviteModal } from "../modals/invite-modal";
 import { CreateChannelModal } from "../modals/create-channel-modal";
 import { MembersModal } from "../modals/members-modal";
 import { EditChannelModal } from "../modals/edit-channel-modal";
-import { SearchServerModal } from "../modals/search-server-modal";
 import { MessageFileModal } from "../modals/message-file-modal";
-import { DeleteMessageModal } from "../modals/delete-message-modal";
-import { useEffect, useState } from "react";
+import { useMounted } from "@/hooks/use-mounted";
 
 export const ModalProvider = () => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useMounted();
 
   if (!isMounted){
     return null;
@@ -28,9 +22,7 @@ export const ModalProvider = () => {
       <CreateChannelModal />
       <MembersModal />
       <EditChannelModal />
-      <SearchServerModal />
       <MessageFileModal />
-      <DeleteMessageModal />
     </>
   );
 };

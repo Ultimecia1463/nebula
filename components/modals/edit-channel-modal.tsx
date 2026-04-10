@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Trash } from "lucide-react";
+import { normalizeChannelType } from "@/lib/channel-type";
 
 export const EditChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
@@ -28,11 +29,20 @@ export const EditChannelModal = () => {
   const { channel, server } = data;
 
   const [name, setName] = useState(channel?.name || "");
-  const [channelType, setChannelType] = useState<"TEXT" | "AUDIO" | "VIDEO">(channel?.type || "TEXT");
+  const [channelType, setChannelType] = useState<"TEXT" | "VIDEO">(
+    channel?.type === "TEXT" ? "TEXT" : "VIDEO"
+  );
   const [loading, setLoading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false); // 🔥 new: confirmation dialog
 
   const router = useRouter();
+
+  useEffect(() => {
+    setName(channel?.name || "");
+    setChannelType(
+      channel ? (normalizeChannelType(channel.type) === "TEXT" ? "TEXT" : "VIDEO") : "TEXT"
+    );
+  }, [channel]);
 
   const onSubmit = async () => {
     if (!channel) return;
@@ -88,8 +98,8 @@ export const EditChannelModal = () => {
             />
 
             <Select
-              defaultValue={channelType}
-              onValueChange={(val) => setChannelType(val as "TEXT" | "AUDIO" | "VIDEO")}
+              value={channelType}
+              onValueChange={(val) => setChannelType(val as "TEXT" | "VIDEO")}
               disabled={loading}
             >
               <SelectTrigger className="w-full">
@@ -97,7 +107,6 @@ export const EditChannelModal = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="TEXT">Text</SelectItem>
-                <SelectItem value="AUDIO">Audio</SelectItem>
                 <SelectItem value="VIDEO">Video</SelectItem>
               </SelectContent>
             </Select>

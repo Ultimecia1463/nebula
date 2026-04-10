@@ -5,7 +5,6 @@ const f = createUploadthing();
  
 const handleAuth = async () => {
   const { userId } = await auth();
-  console.log(`User ID: ${userId}`);
   if (!userId) throw new Error("Unauthorized");
   return { userId };
 }
@@ -14,9 +13,7 @@ const handleAuth = async () => {
 export const ourFileRouter = {
   serverImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
     .middleware(async () => handleAuth())
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload Complete for userId:", metadata.userId);
- 
+    .onUploadComplete(async ({ metadata }) => {
       return { uploadedBy: metadata.userId };
     }),
   messageFile: f(["image", "pdf"])

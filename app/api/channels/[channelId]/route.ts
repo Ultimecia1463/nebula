@@ -1,5 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { ChannelType } from "@prisma/client";
+import { normalizeChannelType } from "@/lib/channel-type";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
@@ -12,7 +14,8 @@ export async function PATCH(
 
     const { channelId } = await params;
     const body = await req.json();
-    const { name, type } = body;
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const type = typeof body.type === "string" ? body.type : "";
 
     if (!name || !type)
       return new NextResponse("Missing required fields", { status: 400 });
@@ -34,9 +37,11 @@ export async function PATCH(
     if (!member || (member.role !== "ADMIN" && member.role !== "MODERATOR"))
       return new NextResponse("Forbidden", { status: 403 });
 
+    const normalizedType = normalizeChannelType(type as ChannelType);
+
     const updatedChannel = await db.channel.update({
       where: { id: channelId },
-      data: { name, type },
+      data: { name, type: normalizedType },
     });
 
     return NextResponse.json(updatedChannel);

@@ -1,14 +1,16 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { createUniqueInviteCode } from "@/lib/invite-code";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { serverId: string } }
+  { params }: { params: Promise<{ serverId: string }> }
 ) {
   try {
     const { userId } = await auth();
     if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    const { serverId } = await params;
 
     const profile = await db.profile.findUnique({
       where: { userId },
@@ -18,7 +20,7 @@ export async function PATCH(
       return new NextResponse("Profile not found", { status: 404 });
 
     const server = await db.server.findUnique({
-      where: { id: params.serverId },
+      where: { id: serverId },
       include: { members: true },
     });
 
@@ -33,7 +35,7 @@ export async function PATCH(
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const newCode = await createUniqueInviteCode();
 
     const updatedServer = await db.server.update({
       where: { id: server.id },

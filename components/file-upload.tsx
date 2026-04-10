@@ -36,11 +36,8 @@ const FileUpload = ({ endpoint, value, onChange }: FileUploadProps) => {
         onChange(res?.[0].ufsUrl);
       }}
       onUploadError={(error: Error) => {
-        console.log(error);
+        console.error(error);
         alert(`ERROR! ${error.message}`);
-      }}
-      onUploadBegin={(name) => {
-        console.log("Uploading: ", name);
       }}
     />
   );

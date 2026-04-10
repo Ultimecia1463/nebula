@@ -33,7 +33,7 @@ const formSchema = z.object({
 
 export const MessageFileModal = () => {
   const { isOpen, onClose, type, data } = useModal();
-  const { apiUrl, query } = data;
+  const { apiUrl, query, onSuccess } = data;
 
   const isModalOpen = isOpen && type === "messageFile";
   const router = useRouter();
@@ -62,10 +62,11 @@ export const MessageFileModal = () => {
       });
 
       form.reset();
+      await onSuccess?.();
       router.refresh();
       handleClose();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

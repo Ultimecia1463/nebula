@@ -1,12 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { createUniqueInviteCode } from "@/lib/invite-code";
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
     const body = await req.json();
-    const { name, imageUrl } = body;
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl : "";
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -24,17 +26,26 @@ export async function POST(req: Request) {
       return new NextResponse("Profile not found", { status: 404 });
     }
 
-    const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const inviteCode = await createUniqueInviteCode();
 
     const server = await db.server.create({
       data: {
         name,
         imageUrl,
         inviteCode,
+        profileId: profile.id,
+        channels: {
+          create: [
+            {
+              name: "general",
+              profileId: profile.id,
+            },
+          ],
+        },
         members: {
           create: [
             {
-              profileId: profile.id, // ✅ FIXED
+              profileId: profile.id,
               role: "ADMIN",
             },
           ],
