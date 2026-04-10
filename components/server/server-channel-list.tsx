@@ -44,7 +44,7 @@ export const ServerChannelList = ({
   const params = useParams();
   const { onOpen } = useModal();
 
-  const Icon = iconMap[type];
+  const SectionIcon = iconMap[type];
   const isAdminOrMod = role === "ADMIN" || role === "MODERATOR";
 
   return (
@@ -52,6 +52,7 @@ export const ServerChannelList = ({
       <div className="flex items-center justify-between px-3 py-2 text-xs uppercase font-semibold text-zinc-500 tracking-wide">
         <div className="flex items-center gap-x-2">
           <ChevronDown className="h-3 w-3" />
+          <SectionIcon className="h-3 w-3" />
           <span>{label}</span>
         </div>
 

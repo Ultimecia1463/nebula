@@ -13,12 +13,13 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useModal } from "@/hooks/use-modal-store";
 import { useRouter } from "next/navigation";
+import { SearchServerResult } from "@/types/chat";
 
 export const SearchServerModal = () => {
   const { isOpen, onClose, type } = useModal();
   const isModalOpen = isOpen && type === "searchServer";
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchServerResult[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -26,7 +27,9 @@ export const SearchServerModal = () => {
     const delayDebounce = setTimeout(async () => {
       if (query.trim().length > 0) {
         setLoading(true);
-        const res = await axios.get(`/api/servers/search?q=${query}`);
+        const res = await axios.get<SearchServerResult[]>(
+          `/api/servers/search?q=${query}`
+        );
         setResults(res.data);
         setLoading(false);
       } else {
@@ -37,8 +40,8 @@ export const SearchServerModal = () => {
     return () => clearTimeout(delayDebounce);
   }, [query]);
 
-  const joinServer = async (inviteCode: string) => {
-    await router.push(`/invite/${inviteCode}`);
+  const joinServer = (inviteCode: string) => {
+    router.push(`/invite/${inviteCode}`);
     onClose();
   };
 

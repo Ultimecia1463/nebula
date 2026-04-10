@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import ChatHeader from "@/components/chat/chat-header";
 import ChannelPageClient from "./client";
+import { ChannelMessage } from "@/types/chat";
 
 interface ChannelPageProps {
   params: Promise<{ serverId: string; channelId: string }>;
@@ -33,6 +34,23 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
     redirect("/");
   }
 
+  const initialMessages = (await db.message.findMany({
+    where: { channelId },
+    include: {
+      member: { include: { profile: true } },
+      replyTo: {
+        include: {
+          member: {
+            include: {
+              profile: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  })) as ChannelMessage[];
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#313338]">
       <ChatHeader
@@ -43,8 +61,8 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
       <ChannelPageClient 
         serverId={serverId} 
         channelId={channelId}
-        member={member}
         channelName={channel.name}
+        initialMessages={initialMessages}
       />
     </div>
   );

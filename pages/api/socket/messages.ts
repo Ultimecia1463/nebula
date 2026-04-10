@@ -1,4 +1,5 @@
 import { NextApiRequest } from "next";
+import { ensureSocketServer } from "@/lib/socket-server";
 import { NextApiResponseServerIO } from "../../../types/socket";
 
 export default async function handler(
@@ -10,10 +11,22 @@ export default async function handler(
   }
 
   try {
-    const { message, channelKey } = req.body;
+    const io = ensureSocketServer(res.socket.server);
+    const { message, channelKey, roomKey } = req.body as {
+      message: unknown;
+      channelKey: string;
+      roomKey?: string;
+    };
 
-    // Emit the message to all clients in the channel
-    res?.socket?.server?.io?.emit(channelKey, message);
+    if (!channelKey) {
+      return res.status(400).json({ error: "Missing channel key" });
+    }
+
+    if (roomKey) {
+      io.to(roomKey).emit(channelKey, message);
+    } else {
+      io.emit(channelKey, message);
+    }
 
     return res.status(200).json({ success: true });
   } catch (error) {

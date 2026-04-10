@@ -67,7 +67,7 @@ const ChatItem = ({
   const [isEditing, setIsEditing] = useState(false);
   const { onOpen } = useModal();
 
-  const params = useParams();
+  const params = useParams<{ serverId: string }>();
   const router = useRouter();
 
   const onMemberClick = useCallback(() => {
@@ -77,7 +77,7 @@ const ChatItem = ({
   }, [member.id, currentMember.id, router, params?.serverId]);
 
   useEffect(() => {
-    const handleKeyDown = (event: any) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" || event.keyCode === 27) {
         setIsEditing(false);
       }
